@@ -20,34 +20,34 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="1-1.py" />
-    <Compile Include="1-2.py" />
+    <Compile Include="01-1.py" />
+    <Compile Include="01-2.py" />
     <Compile Include="10.py" />
     <Compile Include="11-2.py" />
     <Compile Include="11-1.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="2-1.py" />
-    <Compile Include="2-2.py" />
-    <Compile Include="3-1.py" />
-    <Compile Include="4-1.py" />
-    <Compile Include="4-2.py" />
-    <Compile Include="5-1.py" />
-    <Compile Include="5-2.py" />
-    <Compile Include="6-1-fail.py" />
-    <Compile Include="6-1.py" />
-    <Compile Include="6-2.py" />
-    <Compile Include="7-1-fail.py" />
-    <Compile Include="7-1.py" />
-    <Compile Include="7-2.py" />
-    <Compile Include="8-1.py">
+    <Compile Include="02-1.py" />
+    <Compile Include="02-2.py" />
+    <Compile Include="03.py" />
+    <Compile Include="04-1.py" />
+    <Compile Include="04-2.py" />
+    <Compile Include="05-1.py" />
+    <Compile Include="05-2.py" />
+    <Compile Include="06-1-fail.py" />
+    <Compile Include="06-1.py" />
+    <Compile Include="06-2.py" />
+    <Compile Include="07-1-fail.py" />
+    <Compile Include="07-1.py" />
+    <Compile Include="07-2.py" />
+    <Compile Include="08-1.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="8-2.py">
+    <Compile Include="08-2.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="9-2.py" />
-    <Compile Include="9-1.py">
+    <Compile Include="09-2.py" />
+    <Compile Include="09-1.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="dllist.py">

@@ -36,7 +36,7 @@ pat = re.compile(r'^Step ([A-Z]) must be finished before step ([A-Z]) can begin.
 graph = {}
 rgraph = {}
 nodes = SortedSet()
-with open('7-1.txt') as f:
+with open('07-1.txt') as f:
     for line in f:
         m = pat.match(line.strip())
         node = m.group(1)

@@ -22,7 +22,7 @@ minx = 999999999
 maxx = 0
 miny = 999999999
 maxy = 0
-with open('6-1.txt') as f:
+with open('06-1.txt') as f:
     ch = 'A'
     for line in f:
         m = pat.match(line.strip())

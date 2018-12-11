@@ -50,7 +50,7 @@ nworkers = 5
 delay = 60 
 workers = nworkers * [None]
 
-with open('7-1.txt') as f:
+with open('07-1.txt') as f:
     for line in f:
         m = pat.match(line.strip())
         node = m.group(1)

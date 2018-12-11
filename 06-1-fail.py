@@ -63,7 +63,7 @@ def _find(cs, c, maxdist, x, y, visited, distmap):
 
 pat = re.compile(r'^([\-\d]+),[ ]?([\-\d]+)$')
 coords = []
-with open('6-1.txt') as f:
+with open('06-1.txt') as f:
     ch = 'A'
     for line in f:
         m = pat.match(line.strip())

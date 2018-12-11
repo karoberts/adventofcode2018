@@ -4,7 +4,7 @@ import operator
 from collections import Counter
 
 p = None
-with open('5-1.txt') as f:
+with open('05-1.txt') as f:
     p = f.readline().strip()
 
 #p = 'dabAcCaCBAcCcaDA'

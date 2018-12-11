@@ -2,7 +2,7 @@
 cur = 0
 twos = 0
 threes = 0
-with open('2-1.txt') as f:
+with open('02-1.txt') as f:
     for line in f:
         ldict = {}
         for c in line.strip():

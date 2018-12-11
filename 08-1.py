@@ -18,7 +18,7 @@ def readit(pos):
     
     return amt
 
-with open('8-1.txt') as f:
+with open('08-1.txt') as f:
     for line in f:
         es = [int(x) for x in line.strip().split(' ')]
 
@@ -26,31 +26,25 @@ s = '2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2'
 #es = [int(x) for x in s.split(' ')]
 
 meta = []
-nodevals = {}
-nodekids = {}
 #print(es)
 
 i = 0
 stack = []
 while i < len(es):
 
-    nptr = i
     nchild = es[i]
     nmeta = es[i + 1]
-    nodevals[nptr] = 0
-    nodekids[nptr] = []
 
     #print('i', i, nchild, nmeta, stack)
 
     if nchild > 0:
         stack.append((i, 0))
         i += 2
-        nodekids[nptr].append(i)
         continue
 
     i += 2
     for j in range(0, nmeta):
-        nodevals[nptr] += (es[j + i])
+        meta.append(es[j + i])
     i += nmeta
 
     while len(stack) > 0:
@@ -58,22 +52,14 @@ while i < len(es):
         curchild = parent[1] + 1
         nchildren = es[parent[0]]
         if curchild == nchildren:
-            val = 0
             for j in range(0, es[parent[0] + 1]):
-                kidi = es[j + i] - 1
-                if kidi >= len(nodekids[parent[0]]):
-                    continue
-                val += nodevals[nodekids[parent[0]][kidi]]
-            nodevals[parent[0]] = val
+                meta.append(es[j + i])
             i += es[parent[0] + 1]
             continue
-        nodekids[parent[0]].append(i)
         stack.append((parent[0], curchild))
         break
             
-#print(i, len(es))
-#print(stack)
+print(i, len(es))
+print(stack)
 #print(meta)
-#print(nodekids)
-#print(nodevals)
-print(nodevals[0])
+print(sum(meta))

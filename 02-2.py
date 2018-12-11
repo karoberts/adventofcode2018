@@ -1,7 +1,7 @@
 import json
 
 lines = None
-with open('2-1.txt') as f:
+with open('02-1.txt') as f:
     lines = [line.strip() for line in f]
     
 for idx, line in enumerate(lines):
