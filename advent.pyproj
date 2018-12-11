@@ -5,8 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83a136f7-3455-46dd-a652-2155531e450b}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>11-1.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,6 +22,10 @@
     <Compile Include="1-1.py" />
     <Compile Include="1-2.py" />
     <Compile Include="10.py" />
+    <Compile Include="11-2.py" />
+    <Compile Include="11-1.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="2-1.py" />
     <Compile Include="2-2.py" />
     <Compile Include="3-1.py" />
