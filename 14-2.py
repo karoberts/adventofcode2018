@@ -41,8 +41,7 @@ elf2_n = recipes.nodeat(elf2)
 nptr = 0
 npos = 1
 
-#while True:
-for x in range(0, 100000):
+while True:
     next_sum = elf1_n.value + elf2_n.value
     if next_sum < 10:
         recipes.append(next_sum)
@@ -69,7 +68,7 @@ for x in range(0, 100000):
             elf2 += 1
 
     #printit()
-    printit2()
+    #printit2()
 
         #print('found', n.value)
     p = recipes.last
@@ -85,6 +84,22 @@ for x in range(0, 100000):
                 print(np.value)
                 np = np.prev
             print('part2', len(recipes) - len(findit))
+            exit()
+        p = p.prev
+        nptr -= 1
+    p = recipes.last.prev
+    nptr = len(findit) - 1
+    for i in range(0, len(findit)):
+        if p.value != findit[nptr]:
+            break
+        #if nptr < 4:
+        #    print(nptr)
+        if nptr == 0:
+            np = recipes.last.prev
+            for j in range(0, len(findit)):
+                print(np.value)
+                np = np.prev
+            print('part2', len(recipes) - len(findit) - 1)
             exit()
         p = p.prev
         nptr -= 1
