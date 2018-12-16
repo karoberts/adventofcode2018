@@ -1,6 +1,10 @@
 def key(x,y):
     return str(x) + ',' + str(y)
 
+def de_key(k):
+    s = k.split(',')
+    return (int(s[0]), int(s[1]))
+
 elves = {}
 goblins = {}
 grid = {}
@@ -45,7 +49,7 @@ lees_count = 0
 def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
     global lees_count
 
-    global cur_k
+    #global cur_k
 
     lees_count += 1
 
@@ -53,9 +57,10 @@ def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
     if nx < 0 or ny < 0 or nx >= max_x or ny >= max_y or grid[kn] == '#' or kn in friends:
         return False
 
-    if cur_k:
-        printit_marks(marks)
-        wait()
+#   if cur_k:
+#       printit_marks(marks)
+#       print(min_tgt_dist)
+#       wait()
 
     if kn in targets:
         if i + 1 < min_tgt_dist[0]:
@@ -70,13 +75,31 @@ def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
 
     marks[kn] = i + 1
 
-    if mark_lees(nx - 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+    sk = [False] * 4
+    if key(x-2, y) in targets:
+        sk[0] = True
+        if mark_lees(nx - 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+            move_locs[kn] = marks[kn]
+    if key(x+2, y) in targets:
+        sk[1] = True
+        if mark_lees(nx + 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+            move_locs[kn] = marks[kn]
+    if key(x, y-2) in targets:
+        sk[2] = True
+        if mark_lees(nx, ny - 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+            move_locs[kn] = marks[kn]
+    if key(x, y+2) in targets:
+        sk[3] = True
+        if mark_lees(nx, ny + 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+            move_locs[kn] = marks[kn]
+
+    if not sk[0] and mark_lees(nx - 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx, ny - 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+    if not sk[2] and mark_lees(nx, ny - 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx + 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+    if not sk[1] and mark_lees(nx + 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx, ny + 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
+    if not sk[3] and mark_lees(nx, ny + 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
 
     return False
@@ -98,9 +121,9 @@ def lees(x, y, targets, friends):
     move_locs = {}
     min_tgt_dist = [999999]
 
-    print('working on', k)
-    if k == '11,14':
-        cur_k = True
+#    print('working on', k)
+#   if k == '11,14':
+#       cur_k = True
 
     if key(x-1, y) in targets:
         min_tgt_dist[0] = 1
@@ -111,8 +134,8 @@ def lees(x, y, targets, friends):
     if key(x, y+1) in targets:
         min_tgt_dist[0] = 1
 
-    if cur_k:
-        print('start lees')
+#   if cur_k:
+#       print('start lees')
     
     if mark_lees(x - 1, y, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
@@ -124,7 +147,7 @@ def lees(x, y, targets, friends):
         move_locs[k] = marks[k]
 
     #if rn == 24:
-    printit_marks(marks)
+#   printit_marks(marks)
     #    print(move_locs)
 
     if len(move_locs) == 0:
@@ -209,6 +232,7 @@ def attack(k, x, y, me, enemies):
 
 def round(rn):
     moves = []
+    attacked = False
     for y in range(0, max_y):
         for x in range(0, max_x):
             k = key(x,y)
@@ -221,6 +245,10 @@ def round(rn):
                     moves.append((k, move, 'E'))
                     elves[move] = elves[k]
                     del elves[k]
+                    newpos = de_key(move)
+                    attacked |= attack(move, newpos[0], newpos[1], elves[move], goblins)
+                else:
+                    attacked |= attack(k, x, y, elves[k], goblins)
             elif k in goblins:
                 if goblins[k]['lr'] == rn:
                     continue
@@ -230,20 +258,13 @@ def round(rn):
                     moves.append((k, move, 'G'))
                     goblins[move] = goblins[k]
                     del goblins[k]
+                    newpos = de_key(move)
+                    attacked |= attack(move, newpos[0], newpos[1], goblins[move], elves)
+                else:
+                    attacked |= attack(k, x, y, goblins[k], elves)
             else:
                 continue
     #print(moves);
-
-    attacked = False
-    for y in range(0, max_y):
-        for x in range(0, max_x):
-            k = key(x,y)
-            if k in elves:
-                attacked |= attack(k, x, y, elves[k], goblins)
-            elif k in goblins:
-                attacked |= attack(k, x, y, goblins[k], elves)
-            else:
-                continue
 
     if (not attacked and len(moves) == 0) or len(elves) == 0 or len(goblins) == 0:
         print('DONE', rn)
@@ -252,7 +273,9 @@ def round(rn):
 
 max_x = 0
 max_y = 0
-with open('15-1-round34.txt') as f:
+# test1 = 27730
+# test4 = 36334
+with open('15.txt') as f:
     y = 0
     for line in (l.strip('\n') for l in f):
         x = 0
@@ -281,13 +304,15 @@ for rn in range(1, 100):
         printit()
         print(elves)
         print(goblins)
+        print('elves', [e['hp'] for e in elves.values()])
+        print('goblins', [g['hp'] for g in goblins.values()])
         print('combat over')
         hp = 0
         for g in goblins.values():
             hp += g['hp']
         for e in elves.values():
             hp += e['hp']
-        print((rn) * hp)
+        print(rn, (rn - 1) * hp)
         print('lees', lees_count)
         break
 
