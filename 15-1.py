@@ -57,7 +57,7 @@ def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
     if kn in marks and i + 1 > marks[kn]:
         return False
 
-    if i > min_tgt_dist[0]:
+    if i + 1 > min_tgt_dist[0]:
         return False
 
     marks[kn] = i + 1
@@ -81,6 +81,17 @@ def lees(x, y, targets, friends):
     marks = {k: i}
     move_locs = {}
     min_tgt_dist = [999999]
+
+    print('working on', k)
+
+    if key(x-1, y) in targets:
+        min_tgt_dist[0] = 1
+    if key(x+1, y) in targets:
+        min_tgt_dist[0] = 1
+    if key(x, y-1) in targets:
+        min_tgt_dist[0] = 1
+    if key(x, y+1) in targets:
+        min_tgt_dist[0] = 1
     
     if mark_lees(x - 1, y, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
