@@ -28,8 +28,10 @@ def printit_marks(marks):
                         print('e', end='')
                     elif k in goblins:
                         print('g', end='')
-                else:
+                elif marks[k] < 10:
                     print(marks[k], end='')
+                else:
+                    print(marks[k] % 10, end='')
             elif k in elves:
                 print('E', end='')
             elif k in goblins:
@@ -43,18 +45,24 @@ lees_count = 0
 def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
     global lees_count
 
+    global cur_k
+
     lees_count += 1
 
     kn = key(nx, ny)
     if nx < 0 or ny < 0 or nx >= max_x or ny >= max_y or grid[kn] == '#' or kn in friends:
         return False
 
+    if cur_k:
+        printit_marks(marks)
+        wait()
+
     if kn in targets:
         if i + 1 < min_tgt_dist[0]:
              min_tgt_dist[0] = i + 1
         return True
 
-    if kn in marks and i + 1 > marks[kn]:
+    if kn in marks and i + 1 >= marks[kn]:
         return False
 
     if i + 1 > min_tgt_dist[0]:
@@ -73,8 +81,16 @@ def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
 
     return False
 
+import msvcrt
+
+def wait():
+    msvcrt.getch()
+
+
+cur_k = False
 def lees(x, y, targets, friends):
     global rn
+    global cur_k
 
     k = key(x,y)
     i = 0
@@ -83,6 +99,8 @@ def lees(x, y, targets, friends):
     min_tgt_dist = [999999]
 
     print('working on', k)
+    if k == '11,14':
+        cur_k = True
 
     if key(x-1, y) in targets:
         min_tgt_dist[0] = 1
@@ -92,6 +110,9 @@ def lees(x, y, targets, friends):
         min_tgt_dist[0] = 1
     if key(x, y+1) in targets:
         min_tgt_dist[0] = 1
+
+    if cur_k:
+        print('start lees')
     
     if mark_lees(x - 1, y, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
@@ -103,7 +124,7 @@ def lees(x, y, targets, friends):
         move_locs[k] = marks[k]
 
     #if rn == 24:
-    #    printit_marks(marks)
+    printit_marks(marks)
     #    print(move_locs)
 
     if len(move_locs) == 0:
@@ -231,7 +252,7 @@ def round(rn):
 
 max_x = 0
 max_y = 0
-with open('15-test1.txt') as f:
+with open('15-1-round34.txt') as f:
     y = 0
     for line in (l.strip('\n') for l in f):
         x = 0
@@ -270,8 +291,10 @@ for rn in range(1, 100):
         print('lees', lees_count)
         break
 
-    #if rn == 24:
-    #printit()
+    printit()
+    print('lees', lees_count)
+    print('elves', [e['hp'] for e in elves.values()])
+    print('goblins', [g['hp'] for g in goblins.values()])
     #print(elves)
     #print(goblins)
 
