@@ -39,26 +39,36 @@ def printit_marks(marks):
         print()
     print()
 
-def mark_lees(nx, ny, i, marks, move_locs, targets, friends):
+lees_count = 0
+def mark_lees(nx, ny, i, marks, move_locs, targets, friends, min_tgt_dist):
+    global lees_count
+
+    lees_count += 1
+
     kn = key(nx, ny)
     if nx < 0 or ny < 0 or nx >= max_x or ny >= max_y or grid[kn] == '#' or kn in friends:
         return False
 
     if kn in targets:
+        if i + 1 < min_tgt_dist[0]:
+             min_tgt_dist[0] = i + 1
         return True
 
     if kn in marks and i + 1 > marks[kn]:
         return False
 
+    if i > min_tgt_dist[0]:
+        return False
+
     marks[kn] = i + 1
 
-    if mark_lees(nx - 1, ny, i + 1, marks, move_locs, targets, friends):
+    if mark_lees(nx - 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx, ny - 1, i + 1, marks, move_locs, targets, friends):
+    if mark_lees(nx, ny - 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx + 1, ny, i + 1, marks, move_locs, targets, friends):
+    if mark_lees(nx + 1, ny, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
-    if mark_lees(nx, ny + 1, i + 1, marks, move_locs, targets, friends):
+    if mark_lees(nx, ny + 1, i + 1, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[kn] = marks[kn]
 
     return False
@@ -70,14 +80,15 @@ def lees(x, y, targets, friends):
     i = 0
     marks = {k: i}
     move_locs = {}
+    min_tgt_dist = [999999]
     
-    if mark_lees(x - 1, y, i, marks, move_locs, targets, friends):
+    if mark_lees(x - 1, y, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
-    if mark_lees(x, y - 1, i, marks, move_locs, targets, friends):
+    if mark_lees(x, y - 1, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
-    if mark_lees(x + 1, y, i, marks, move_locs, targets, friends):
+    if mark_lees(x + 1, y, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
-    if mark_lees(x, y + 1, i, marks, move_locs, targets, friends):
+    if mark_lees(x, y + 1, i, marks, move_locs, targets, friends, min_tgt_dist):
         move_locs[k] = marks[k]
 
     #if rn == 24:
@@ -209,7 +220,7 @@ def round(rn):
 
 max_x = 0
 max_y = 0
-with open('15-test5.txt') as f:
+with open('15-test1.txt') as f:
     y = 0
     for line in (l.strip('\n') for l in f):
         x = 0
@@ -244,11 +255,12 @@ for rn in range(1, 100):
             hp += g['hp']
         for e in elves.values():
             hp += e['hp']
-        print((rn - 1) * hp)
+        print((rn) * hp)
+        print('lees', lees_count)
         break
 
     #if rn == 24:
-    printit()
+    #printit()
     #print(elves)
     #print(goblins)
 
