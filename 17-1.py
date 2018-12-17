@@ -12,7 +12,10 @@ def key(x,y):
 def printit(toscr = True):
     ws = 0
     for y in range(0, max_y + 1):
-        for x in range(min_clay_x - 1, max_x + 1):
+        for x in range(min_clay_x - 1, max_x + 2):
+            if x == 500 and y == 0:
+                print('+', end='')
+                continue
             k = key(x,y)
             if k in clay:
                 if toscr:
@@ -20,14 +23,17 @@ def printit(toscr = True):
             elif k in water and k in drop:
                 if toscr:
                     print('!', end='')
+                ws += 1
             elif k in water:
                 if toscr:
                     print('~', end='')
-                ws += 1
+                if y >= min_y:
+                    ws += 1
             elif k in drop:
                 if toscr:
                     print('|', end='')
-                ws += 1
+                if y >= min_y:
+                    ws += 1
             else:
                 if toscr:
                     print('.', end='')
@@ -41,8 +47,7 @@ pat = re.compile(r'^(x|y)=(\d+), (x|y)=(\d+)..(\d+)$')
 
 clay = set()
 max_y = 0
-min_y = 0
-min_x = 0
+min_y = 9999999
 max_x = 0
 min_clay_x = 9999999
 with open('17.txt') as f:
@@ -51,13 +56,12 @@ with open('17.txt') as f:
         if m.group(1) == 'x':
             x = int(m.group(2))
             max_x = max(x, max_x)
-            min_x = min(x, min_x)
             min_clay_x = min(x, min_clay_x)
             for y in range(int(m.group(4)), int(m.group(5)) + 1):
                 k = key(x,y)
                 clay.add(k)
                 max_y = max(y, max_y)
-                min_y = min(x, min_y)
+                min_y = min(y, min_y)
         else:
             y = int(m.group(2))
             max_y = max(y, max_y)
@@ -66,12 +70,11 @@ with open('17.txt') as f:
                 k = key(x,y)
                 clay.add(k)
                 max_x = max(x, max_x)
-                min_x = min(x, min_x)
                 min_clay_x = min(x, min_clay_x)
 
-print(min_clay_x)
-print(min_x, min_y)
-print(max_x, max_y)
+eprint('mcx', min_clay_x)
+eprint('miny', min_y)
+eprint('maxcy', max_x, max_y)
 
 # spring = (500, 0)
 
@@ -113,7 +116,7 @@ def flow(x, y):
 
         blk_l = SENTINEL
         drop_l = SENTINEL
-        for cx in range(x, min_x - 1, -1):
+        for cx in range(x, 0, -1):
             k_c = key(cx, y)
             k_c_dn = key(cx, y + 1)
             if k_c_dn not in clay and k_c_dn not in water:
@@ -127,7 +130,7 @@ def flow(x, y):
             for cx in range(x, drop_r):
                 k_c = key(cx, y)
                 drop.add(k_c)
-            for cx in range(blk_l, x):
+            for cx in range(blk_l + 1, x):
                 k_c = key(cx, y)
                 drop.add(k_c)
             flow(drop_r, y)
@@ -144,21 +147,43 @@ def flow(x, y):
             flow(x + 1, y)
             flow(x - 1, y)
         elif blk_l != SENTINEL and blk_r != SENTINEL:
-            for cx in range(blk_l, blk_r):
+            for cx in range(blk_l + 1, blk_r):
                 k_c = key(cx, y)
                 water.add(k_c)
+                if k_c in drop:
+                    drop.remove(k_c)
 
 sys.setrecursionlimit(2500)
 
 round = 0
+last_drop_size = 0
+last_water_size = 0
 while True:                
     drop = set()
     flow(500, 1)
-    eprint('round', round, 'deep', deepest)
-    if round == 700:
-        c = printit(True)
-        print(c)
+    if last_drop_size == len(drop) and last_water_size == len(water):
+        c = printit(False)
+        eprint(c)
+        eprint(len(water) + len(drop))
+        for w in water:
+            if w in drop:
+                print('d+w', w)
+            if w in clay:
+                print('d+c', w)
+        for d in drop:
+            if d in water:
+                print('w+d', d)
+            if d in clay:
+                print('c+d', d)
         exit()
+
+    last_drop_size = len(drop)
+    last_water_size = len(water)
+    eprint('round', round, 'deep', deepest)
+    #if round == 700:
+        #c = printit(True)
+        #print(c)
+        #exit()
     #if hitmax:
         #break
     round += 1
