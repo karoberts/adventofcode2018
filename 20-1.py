@@ -1,4 +1,5 @@
 import sys
+import dllist
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -22,9 +23,9 @@ def printit(qs = False):
                 print(grid[k], end='')
         print()
 
-line = '^ENWWW(NEEE|SSE(EE|N))$'   # 10
-line = '^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$'  # 18
-line = '^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$'  # 23
+#line = '^ENWWW(NEEE|SSE(EE|N))$'   # 10
+#line = '^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$'  # 18
+#line = '^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$'  # 23
 #line = '^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$'   # 31
 
 grid = {}
@@ -101,37 +102,100 @@ def next_branch(pos):
             return pos
         pos += 1
 
-def skip_branches(pos):
-    parenstack = 0
-    while True:
-        if line[pos] == '$':
-            raise 1
-        elif line[pos] == '(':
-            parenstack += 1
-        elif line[pos] == ')':
-            if parenstack == 0:
-                return pos + 1
-            parenstack -= 1
-        pos += 1
+class Node(object):
+    def __init__(self, pos, x, y, px, py, parens, skipping):
+        self.pos = pos
+        self.x = x
+        self.y = y
+        self.px = px
+        self.py = py
+        self.parens = parens
+        self.skipping = skipping
 
-def recur5(pos, x, y):
+    def __str__(self):
+        return "Node(pos {}, ({}, {}), ({}, {}) ps {}, sk={})".format(self.pos, self.x, self.y, self.px, self.py, self.parens, self.skipping)
+
+    def __repr__(self):
+        return '<' + str(self) + '>'
+
+def recur6(q):
+    while len(q) > 0:
+        track = q.popleft()
+
+        pos = track.pos
+        x = track.x
+        y = track.y
+        while True:
+            if not track.skipping and line[pos] in ['W', 'N', 'E', 'S']:
+                (x, y) = set_door(x, y, line[pos])
+            elif line[pos] == '$':
+                break
+            elif line[pos] == '(':
+                if track.skipping:
+                    track.parens += 1
+                else:
+                    q.appendright(Node(pos + 1, x, y, x, y, 1, False))
+                break
+            elif not track.skipping and line[pos] == '|':
+                q.appendright(Node(pos + 1, x, y, track.px, track.py, 1, True))
+                q.appendright(Node(pos + 1, x, y, track.px, track.py, 1, False))
+                break
+            elif line[pos] == ')':
+                track.parens -= 1
+                if track.parens == 0:
+                    track.pos = pos + 1
+                    track.skipping = False
+                    q.appendright(track)
+                break
+            pos += 1
+
+def recur5(pos, x, y, depth):
+    # print(' ' * depth, pos)
+    loops = 0
+    np = 0
     while pos < len(line):
         if line[pos] in ['W', 'N', 'E', 'S']:
             (x, y) = set_door(x, y, line[pos])
             pos += 1
         elif line[pos] == '$':
-            return
+            return loops
         elif line[pos] == '(':
-            recur5(pos + 1, x, y)
-            np = next_branch(pos + 1)
-            while np > 0:
-                recur5(np + 1, x, y)
-                np = next_branch(np + 1)
-            pos = -1 * np + 1
+            loops += recur5(pos + 1, x, y, depth + 1)
+            np = pipemap[pos][0]
+            while True:
+                loops += recur5(np + 1, x, y, depth + 1)
+                pm = pipemap[np]
+                if pm[1] == ')':
+                    break
+                np = pm[0]
+            pos = np
         elif line[pos] == '|':
-            pos = skip_branches(pos)
+            pos = parenmap[pos] + 1
         elif line[pos] == ')':
             pos += 1
+        loops += 1
+    return loops
+
+def index_parens():
+    stack = []
+    prevpipe = []
+    for p, c in enumerate(line):
+        if c == '(':
+            stack.append((p,c,[]))
+            prevpipe.append(p)
+        elif c == '|':
+            pc = stack[-1]
+            pc[2].append(p)
+            pp = prevpipe.pop()
+            pipemap[pp] = (p, c)
+            prevpipe.append(p)
+        elif c == ')':
+            pc = stack.pop()
+            parenmap[pc[0]] = p
+            for i in pc[2]:
+                parenmap[i] = p
+            pp = prevpipe.pop()
+            pipemap[pp] = (p, c)
 
 grid['0,0'] = 'X'
 grid['1,0'] = '?'
@@ -142,6 +206,17 @@ grid['1,1'] = '#'
 grid['-1,1'] = '#'
 grid['-1,-1'] = '#'
 grid['1,-1'] = '#'
-recur5(1, 0, 0)
+#q = dllist.dllist()
+#q.appendright(Node(1, 0, 0, 0, 0, 0, False))
+#recur6(q)
 
+parenmap = {}
+pipemap = {}
+index_parens()
+#print(parenmap)
+#print(pipemap)
+
+loops = recur5(1, 0, 0, 0)
+
+print('loops', loops)
 printit()
