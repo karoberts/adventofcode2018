@@ -23,8 +23,8 @@ def printit(qs = False):
         print()
 
 line = '^ENWWW(NEEE|SSE(EE|N))$'   # 10
-line = '^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$'  # 18
-line = '^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$'  # 23
+#line = '^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$'  # 18
+#line = '^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$'  # 23
 #line = '^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$'   # 31
 
 grid = {}
@@ -86,52 +86,102 @@ def set_door(x, y, c):
         set_grid(x,y + 3, '?')
         return (x, y + 2)
 
-def next_branch(pos):
-    parenstack = 0
-    while True:
-        if line[pos] == '$':
-            raise 1
-        elif line[pos] == '(':
-            parenstack += 1
-        elif line[pos] == ')':
-            if parenstack == 0:
-                return pos * -1
-            parenstack -= 1
-        elif line[pos] == '|' and parenstack == 0:
-            return pos
-        pos += 1
 
-def skip_branches(pos):
-    parenstack = 0
-    while True:
-        if line[pos] == '$':
-            raise 1
-        elif line[pos] == '(':
-            parenstack += 1
-        elif line[pos] == ')':
-            if parenstack == 0:
-                return pos + 1
-            parenstack -= 1
-        pos += 1
+from collections import defaultdict
 
-def recur5(pos, x, y):
-    while pos < len(line):
+class Node(object):
+    __slots__ = ('__value', '__ptrs')
+
+    def __init__(self):
+        self.__ptrs = []
+        self.__value = ''
+
+    def add_child(self, node):
+        self.__ptrs.append(node)
+
+    def get_children(self):
+        return self.__ptrs
+
+    def get_value(self):
+        return self.__value
+
+    def append_value(self, c):
+        self.__value += c
+
+    def __str__(self):
+        if len(self.__ptrs) == 0:
+            return 'node(' + str(self.__value) + ')'
+        return 'node(' + str(self.__value) + '[' + ','.join((str(s) for s in self.__ptrs)) + '])'
+
+    def __repr__(self):
+        return '<node(' + str(self.__value) + '[' + ','.join((str(s) for s in self.__ptrs)) + '])>'
+
+    def printit(self):
+        self.__printit(self, 0)
+
+    def __printit(self, n, d):
+        print('  ' * d, 'node(' + str(n.__value) + ')')
+        for c in n.__ptrs:
+            self.__printit(c, d + 1)
+
+def recur3(pos, parent):
+    newNode = True
+    lastPipe = False
+    node = None
+    while True:
         if line[pos] in ['W', 'N', 'E', 'S']:
-            (x, y) = set_door(x, y, line[pos])
+            if newNode:
+                node = Node()
+                parent.add_child(node)
+                newNode = False
+                lastPipe = False
+            node.append_value(line[pos])
             pos += 1
         elif line[pos] == '$':
-            return
-        elif line[pos] == '(':
-            recur5(pos + 1, x, y)
-            np = next_branch(pos + 1)
-            while np > 0:
-                recur5(np + 1, x, y)
-                np = next_branch(np + 1)
-            pos = -1 * np + 1
+            return 0
         elif line[pos] == '|':
-            pos = skip_branches(pos)
-        elif line[pos] == ')':
+            newNode = True
+            lastPipe = True
             pos += 1
+        elif line[pos] == '(':
+            pos = recur3(pos + 1, node)
+            newNode = True
+            lastPipe = False
+        elif line[pos] == ')':
+            if lastPipe:
+                node = Node()
+                parent.add_child(node)
+            return pos + 1
+
+def recur5(pos, parent):
+    newNode = True
+    lastPipe = False
+    node = None
+    while True:
+        if line[pos] in ['W', 'N', 'E', 'S']:
+            if newNode:
+                node = Node()
+                parent.add_child(node)
+                newNode = False
+                lastPipe = False
+            node.append_value(line[pos])
+            pos += 1
+        elif line[pos] == '$':
+            return 0
+        elif line[pos] == '|':
+            newNode = True
+            lastPipe = True
+            pos += 1
+        elif line[pos] == '(':
+            pos = recur3(pos + 1, node)
+            newNode = True
+            lastPipe = False
+        elif line[pos] == ')':
+            if lastPipe:
+                node = Node()
+                parent.add_child(node)
+            return pos + 1
+
 
 grid['0,0'] = 'X'
 grid['1,0'] = '?'
@@ -142,6 +192,11 @@ grid['1,1'] = '#'
 grid['-1,1'] = '#'
 grid['-1,-1'] = '#'
 grid['1,-1'] = '#'
-recur5(1, 0, 0)
+#recur2(1, 0, 0)
 
-printit()
+
+graph = Node()
+#recur3(1, graph)
+recur4(1, graph)
+
+graph.printit()

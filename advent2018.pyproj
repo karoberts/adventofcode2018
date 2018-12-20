@@ -78,6 +78,7 @@
     <Compile Include="19.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="20-1-fail.py" />
     <Compile Include="20-1.py">
       <SubType>Code</SubType>
     </Compile>
