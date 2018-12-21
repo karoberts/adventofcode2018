@@ -88,68 +88,6 @@ def set_door(x, y, c):
         set_grid(x,y + 3, '?')
         return (x, y + 2)
 
-def next_branch(pos):
-    parenstack = 0
-    while True:
-        if line[pos] == '$':
-            raise 1
-        elif line[pos] == '(':
-            parenstack += 1
-        elif line[pos] == ')':
-            if parenstack == 0:
-                return pos * -1
-            parenstack -= 1
-        elif line[pos] == '|' and parenstack == 0:
-            return pos
-        pos += 1
-
-class Node(object):
-    def __init__(self, pos, x, y, px, py, parens, skipping):
-        self.pos = pos
-        self.x = x
-        self.y = y
-        self.px = px
-        self.py = py
-        self.parens = parens
-        self.skipping = skipping
-
-    def __str__(self):
-        return "Node(pos {}, ({}, {}), ({}, {}) ps {}, sk={})".format(self.pos, self.x, self.y, self.px, self.py, self.parens, self.skipping)
-
-    def __repr__(self):
-        return '<' + str(self) + '>'
-
-def recur6(q):
-    while len(q) > 0:
-        track = q.popleft()
-
-        pos = track.pos
-        x = track.x
-        y = track.y
-        while True:
-            if not track.skipping and line[pos] in ['W', 'N', 'E', 'S']:
-                (x, y) = set_door(x, y, line[pos])
-            elif line[pos] == '$':
-                break
-            elif line[pos] == '(':
-                if track.skipping:
-                    track.parens += 1
-                else:
-                    q.appendright(Node(pos + 1, x, y, x, y, 1, False))
-                break
-            elif not track.skipping and line[pos] == '|':
-                q.appendright(Node(pos + 1, x, y, track.px, track.py, 1, True))
-                q.appendright(Node(pos + 1, x, y, track.px, track.py, 1, False))
-                break
-            elif line[pos] == ')':
-                track.parens -= 1
-                if track.parens == 0:
-                    track.pos = pos + 1
-                    track.skipping = False
-                    q.appendright(track)
-                break
-            pos += 1
-
 def recur5(pos, x, y, depth):
     # print(' ' * depth, pos)
     loops = 0
