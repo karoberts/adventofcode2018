@@ -1,4 +1,5 @@
 import sys
+import re
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -133,6 +134,31 @@ def recur5(pos, x, y, depth):
             pos = skip_branches(pos)
         elif line[pos] == ')':
             pos += 1
+
+
+pat = re.compile(r'(EW|WE|NS|SN)')
+pat2 = re.compile(r'(\(\|\))')
+def remove_noops(l):
+    a = re.sub(pat, '', l)
+    if a is None:
+        a = l
+    b = re.sub(pat2, '', a)
+    if b is None:
+        b = l
+    return b
+
+
+ln = len(line)
+print(len(line))
+line = remove_noops(line)
+#print(line)
+while len(line) < ln:
+    ln = len(line)
+    line = remove_noops(line)
+    #print(line)
+print(line)
+print(len(line))
+#exit()
 
 grid['0,0'] = 'X'
 grid['1,0'] = '?'

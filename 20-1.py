@@ -188,7 +188,7 @@ loops = recur5(1, 0, 0, 0)
 print('loops', loops)
 printit()
 
-sys.setrecursionlimit(4000)
+sys.setrecursionlimit(5000)
 
 def lees(x, y, dist, marks):
     def checkmark(k):
@@ -240,6 +240,55 @@ def lees(x, y, dist, marks):
             lees(x, y + 2, dist + 1, marks)
         break;
 
+def dfs(x, y, px,py, dist):
+    def checkmark(nx,ny):
+        k = key(x + nx, y + ny)
+        if px == (x + nx*2) and py == (y + ny*2):
+            return False
+        if grid[k] == '-' or grid[k] == '|':
+            return True
+        else:
+            return False
+
+    while True:
+        east = checkmark(1,0)
+        west = checkmark(-1,0)
+        north = checkmark(0, -1)
+        south = checkmark(0, 1)
+
+        count = (1 if east else 0) + (1 if west else 0) + (1 if north else 0) + (1 if south else 0)
+
+        # dead end
+        if count == 0:
+           return dist
+
+        # only one choice (iterate)
+        if count == 1:
+            dist += 1
+            px = x
+            py = y
+            if east:
+                x += 2
+            elif west:
+                x -= 2
+            elif north:
+                y -= 2
+            elif south:
+                y += 2
+            continue
+
+        # branch
+        md = dist
+        if east:
+            md = max(dist, dfs(x + 2, y, x, y, dist + 1))
+        if west:
+            md = max(md, dfs(x - 2, y, x, y, dist + 1))
+        if north:
+            md = max(md, dist, dfs(x, y - 2, x, y, dist + 1))
+        if south:
+            md = max(md, dfs(x, y + 2, x, y, dist + 1))
+        return md
+
 marks = {}
 lees(0, 0, 1, marks)
 #print(marks)
@@ -249,3 +298,5 @@ lees(0, 0, 1, marks)
 
 maxkey = max(marks, key=lambda x:marks[x])
 print(maxkey, marks[maxkey], grid[maxkey])
+
+print(dfs(0, 0, 0, 0, 0))
