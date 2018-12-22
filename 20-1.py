@@ -12,11 +12,13 @@ with open('20.txt') as f:
     line = f.readline().strip()
 
 
-def printit(qs = False):
+def printit(qs = False, marks = None):
     for y in range(min_y - 2, max_y + 3):
         for x in range(min_x - 2, max_x + 3):
             k = key(x,y)
-            if k not in grid:
+            if marks and k in marks:
+                print(str(marks[k] % 10), end='')
+            elif k not in grid:
                 print(' ', end='')
             elif not qs and grid[k] == '?':
                 print('#', end='')
@@ -184,3 +186,59 @@ loops = recur5(1, 0, 0, 0)
 
 print('loops', loops)
 printit()
+
+sys.setrecursionlimit(4000)
+
+def lees(x, y, dist, marks):
+    def checkmark(k):
+        if k in marks:
+            if dist <= marks[k]:
+                marks[k] = dist
+                return True
+            else:
+                return False
+        if grid[k] == '-' or grid[k] == '|':
+            marks[k] = dist
+            return True
+        else:
+            return False
+
+    while True:
+        east = checkmark(key(x + 1, y))
+        west = checkmark(key(x - 1, y))
+        north = checkmark(key(x, y - 1))
+        south = checkmark(key(x, y + 1))
+
+        count = (1 if east else 0) + (1 if west else 0) + (1 if north else 0) + (1 if south else 0)
+
+        if count == 1:
+            dist += 1
+            if east:
+                x += 2
+            if west:
+                x -= 2
+            if north:
+                y -= 2
+            if south:
+                y += 2
+            continue
+
+        if east:
+            lees(x + 2, y, dist + 1, marks)
+        if west:
+            lees(x - 2, y, dist + 1, marks)
+        if north:
+            lees(x, y - 2, dist + 1, marks)
+        if south:
+            lees(x, y + 2, dist + 1, marks)
+        break;
+
+marks = {}
+lees(0, 0, 1, marks)
+#print(marks)
+printit(False, marks)
+
+# > 4178
+
+maxkey = max(marks, key=lambda x:marks[x])
+print(maxkey, marks[maxkey])
