@@ -26,6 +26,7 @@ def printit(qs = False, marks = None):
                 print(grid[k], end='')
         print()
 
+#line = '^WNE$'
 #line = '^ENWWW(NEEE|SSE(EE|N))$'   # 10
 #line = '^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$'  # 18
 #line = '^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$'  # 23
@@ -211,18 +212,24 @@ def lees(x, y, dist, marks):
 
         count = (1 if east else 0) + (1 if west else 0) + (1 if north else 0) + (1 if south else 0)
 
+        # dead end
+        if count == 0:
+           break
+
+        # only one choice (iterate)
         if count == 1:
             dist += 1
             if east:
                 x += 2
-            if west:
+            elif west:
                 x -= 2
-            if north:
+            elif north:
                 y -= 2
-            if south:
+            elif south:
                 y += 2
             continue
 
+        # branch
         if east:
             lees(x + 2, y, dist + 1, marks)
         if west:
@@ -236,9 +243,9 @@ def lees(x, y, dist, marks):
 marks = {}
 lees(0, 0, 1, marks)
 #print(marks)
-printit(False, marks)
+#printit(False, marks)
 
 # > 4178
 
 maxkey = max(marks, key=lambda x:marks[x])
-print(maxkey, marks[maxkey])
+print(maxkey, marks[maxkey], grid[maxkey])
