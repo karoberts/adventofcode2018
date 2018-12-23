@@ -146,6 +146,8 @@ regs = [0, 0, 0, 0, 0, 0]
 
 # 10349410
 
+# 6601554 answer->7717135
+
 printregs()
 
 fs = {}
@@ -191,6 +193,7 @@ while True:
     if regs[ipreg] == 29:
         if regs[4] in items:
             print(regs[4], last)
+            exit()
         items.add(regs[4])
         printregs()
         print(len(items) / 0xffffff * 100.0)
