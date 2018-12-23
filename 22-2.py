@@ -2,22 +2,26 @@ import sys
 from collections import defaultdict
 sys.setrecursionlimit(5000)
 
-# < 993
+# < 991
 depth = 6084
 target = '14,709'
 target_x = 14
 target_y = 709
-
-max_x = target_x + 50
-max_y = target_y + 50
-
-print(max_x, max_y)
 
 p = True
 
 #depth = 510
 #target_x = 10
 #target_y = 10
+
+# this should get 1087
+depth = 6969
+target_x, target_y = 9, 796
+
+max_x = target_x + 10
+max_y = target_y + 10
+
+print(max_x, max_y)
 
 grid = {}
 ero_table = {}
@@ -61,7 +65,7 @@ for y in range(0, max_y):
     if p:
         print()
 
-min_found = 9999999999
+min_found = 99999999999
 best = defaultdict(lambda:999999)
 
 def dfs(x,y,px,py,eq,mins,mvs):
@@ -81,10 +85,7 @@ def dfs(x,y,px,py,eq,mins,mvs):
             return 99999999999
         k = key(gx, gy)
         if gx == target_x and gy == target_y:
-            if neq == 't':
-                return 1
-            else:
-                return 99999999999
+            return 1
         if grid[k] == '.' and neq != 'n':
             return manhat_dist(gx, gy)
         elif grid[k] == '=' and neq != 't':
@@ -94,11 +95,19 @@ def dfs(x,y,px,py,eq,mins,mvs):
         else:
             return 99999999999
 
+    if x == target_x and y == target_y:
+        if eq != 't':
+            mins += 7
+
     if mins > min_found:
         return mins
 
     k = key(x,y)
-    if mins < best[k]:
+    if k in mvs:
+        return 9999999999
+
+    mvs[k] = mins
+    if mins <= best[k]:
         best[k] = mins
     else:
         return 9999999999
@@ -106,7 +115,10 @@ def dfs(x,y,px,py,eq,mins,mvs):
     if x == target_x and y == target_y:
         min_found = min(min_found, mins)
         #print(min_found, sum((m[2] for m in mvs)), mvs)
-        print(min_found)
+        if min_found == 45:
+            for m in mvs:
+                print(m)
+        print(min_found, mins, len(mvs))
         return mins
 
     # branch
@@ -143,13 +155,15 @@ def dfs(x,y,px,py,eq,mins,mvs):
             #print(ordering[0][1], m, x, y)
 
         for i in ordering:
+            #nmvs = mvs
             #nmvs = list(mvs)
+            nmvs = dict(mvs)
             #nmvs.append((x + i[2], y + i[3], mdelt, sw))
-            m = min(m, dfs(x + i[2], y + i[3], x, y, sw, mins + mdelt, mvs))
+            m = min(m, dfs(x + i[2], y + i[3], x, y, sw, mins + mdelt, nmvs))
 
     return m
 
     pass
 
-dfs(0,0,0,0,'t',0,[])
+dfs(0,0,0,0,'t',0,{})
 print('best', best[key(target_x, target_y)])
