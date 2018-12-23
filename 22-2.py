@@ -1,25 +1,25 @@
 import sys
 from collections import defaultdict
+import heapq
 sys.setrecursionlimit(5000)
 
 # < 991
 depth = 6084
-target = '14,709'
 target_x = 14
 target_y = 709
 
-p = True
+p = False
 
 #depth = 510
 #target_x = 10
 #target_y = 10
 
 # this should get 1087
-depth = 6969
-target_x, target_y = 9, 796
+#depth = 6969
+#target_x, target_y = 9, 796
 
-max_x = target_x + 10
-max_y = target_y + 10
+max_x = target_x + 30
+max_y = target_y + 30
 
 print(max_x, max_y)
 
@@ -57,9 +57,9 @@ for y in range(0, max_y):
         c = grid[key(x,y)]
         if p:
             if x == 0 and y == 0:
-                print('M', end='')
+                print('m', end='')
             elif x == target_x and y == target_y:
-                print('T', end='')
+                print('t', end='')
             else:
                 print(c, end='')
     if p:
@@ -165,5 +165,118 @@ def dfs(x,y,px,py,eq,mins,mvs):
 
     pass
 
-dfs(0,0,0,0,'t',0,{})
-print('best', best[key(target_x, target_y)])
+def print_map(dist):
+    for y in range(0, max_y):
+        for x in range(0, max_x):
+            k = key(x,y)
+            c = grid[k]
+            if k in dist:
+                print(' {:02} '.format(dist[k]), end='')
+            elif x == 0 and y == 0:
+                print(' mm ', end='')
+            elif x == target_x and y == target_y:
+                print(' tt ', end='')
+            else:
+                print(' ' + c + c + ' ', end='')
+        print()
+    print()
+
+gomap = { '.=' : 'c', '.|': 't', '=.': 'c', '=|': 'n', '|.': 't', '|=': 'n' }
+
+def dijkstra():
+    tests = [ (1, 0), (-1, 0), (0, -1), (0, 1) ]
+    def get_neighbors(x,y,eq):
+        k = key(x,y)
+        c = grid[k]
+        ns = []
+
+        for t in tests:
+            tx = x + t[0]
+            ty = y + t[1]
+            if tx < 0 or ty < 0 or tx >= max_x or ty >= max_y:
+                continue
+            tk = key(tx, ty)
+            tt = grid[tk]
+
+            if tt == c:
+                ns.append( [1, tx, ty, tk + ',' + eq, eq] )
+                continue
+
+            needed_tool = gomap[c + tt]
+            if eq == needed_tool:
+                ns.append( [1, tx, ty, tk + ',' + eq, eq] )
+            else:
+                ns.append( [8, tx, ty, tk + ',' + needed_tool, needed_tool] )
+
+        for n in ns:
+            n.append(True)
+        return ns
+
+    dist['0,0,t'] = 0
+
+    prev['0,0,t'] = None
+
+    finder = {}
+
+    inq = set()
+    h = []
+    heapq.heappush(h, [0, 0, 0, '0,0,t', 't', True])
+    finder['0,0,t'] = h[0]
+    inq.add('0,0,t')
+
+    while len(h) > 0:
+        #print_map(dist);
+        u = heapq.heappop(h)
+        if not u[5]:
+            continue
+        inq.remove(u[3])
+        #if u[1] == target_y and u[2] == target_y:
+            #return u
+        uk = u[3]
+        for v in get_neighbors(u[1], u[2], u[4]):
+            if v[1] == target_x and v[2] == target_y:
+                if v[4] != 't' and v[0] == 1:
+                    v[0] += 7
+                    v[4] = 't'
+                    v[3] = key(target_x, target_y) + ',t'
+            alt = dist[uk] + v[0]
+            if alt < dist[v[3]]:
+                dist[v[3]] = alt
+                prev[v[3]] = (uk, v[0], v[4], v[1], v[2])
+                entry = [alt, v[1], v[2], v[3], v[4], True]
+                if v[3] in inq:
+                    finder[v[3]][5] = False
+                inq.add(v[3])
+                finder[v[3]] = entry
+
+                heapq.heappush(h, entry)
+
+def print_path(tgt):
+    s = []
+    u = (tgt + ',t', 0, 't')
+    cost = 0
+    while u:
+        s.append(u)
+        cost += u[1]
+        u = prev[u[0]] if u[0] in prev else None
+
+    #for c in reversed(s):
+     #   print(c[0], c[1], grid[key(c[3], c[4])], c[2])
+    return cost
+
+
+#dfs(0,0,0,0,'t',0,{})
+#print('best', best[key(target_x, target_y)])
+
+prev = {}
+dist = defaultdict(lambda :999999999)
+
+x = dijkstra()
+print(x)
+
+cost = print_path(key(target_x, target_y))
+print(dist[key(target_x, target_y) + ',t'])
+print(cost)
+
+#cost = print_path(key(4,4))
+#print(cost)
