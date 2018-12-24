@@ -151,17 +151,17 @@ def remove_noops(l):
     return b
 
 
-ln = len(line)
-print(len(line))
-line = remove_noops(line)
+#ln = len(line)
+#print(len(line))
+#line = remove_noops(line)
+##print(line)
+#while len(line) < ln:
+#    ln = len(line)
+#    line = remove_noops(line)
+#    #print(line)
 #print(line)
-while len(line) < ln:
-    ln = len(line)
-    line = remove_noops(line)
-    #print(line)
-print(line)
-print(len(line))
-#exit()
+#print(len(line))
+##exit()
 
 
 grid['0,0'] = 'X'
@@ -191,24 +191,24 @@ printit()
 sys.setrecursionlimit(5000)
 
 def lees(x, y, dist, marks):
-    def checkmark(k):
+    def checkmark(k, d):
         if k in marks:
-            if dist <= marks[k]:
-                marks[k] = dist
+            if d <= marks[k]:
+                marks[k] = d
                 return True
             else:
                 return False
         if grid[k] == '-' or grid[k] == '|':
-            marks[k] = dist
+            marks[k] = d
             return True
         else:
             return False
 
     while True:
-        east = checkmark(key(x + 1, y))
-        west = checkmark(key(x - 1, y))
-        north = checkmark(key(x, y - 1))
-        south = checkmark(key(x, y + 1))
+        east = checkmark(key(x + 1, y), dist)
+        west = checkmark(key(x - 1, y), dist)
+        north = checkmark(key(x, y - 1), dist)
+        south = checkmark(key(x, y + 1), dist)
 
         count = (1 if east else 0) + (1 if west else 0) + (1 if north else 0) + (1 if south else 0)
 
@@ -240,7 +240,7 @@ def lees(x, y, dist, marks):
             lees(x, y + 2, dist + 1, marks)
         break;
 
-def dfs(x, y, px,py, dist):
+def dfs(x, y, px,py, dist, segments):
     def checkmark(nx,ny):
         k = key(x + nx, y + ny)
         if px == (x + nx*2) and py == (y + ny*2):
@@ -250,6 +250,7 @@ def dfs(x, y, px,py, dist):
         else:
             return False
 
+    curseg = 0
     while True:
         east = checkmark(1,0)
         west = checkmark(-1,0)
@@ -260,10 +261,14 @@ def dfs(x, y, px,py, dist):
 
         # dead end
         if count == 0:
-           return dist
+            segments.append(curseg)
+            if dist > 4166:
+                print(dist, sum(segments))
+            return dist
 
         # only one choice (iterate)
         if count == 1:
+            curseg += 1
             dist += 1
             px = x
             py = y
@@ -280,13 +285,22 @@ def dfs(x, y, px,py, dist):
         # branch
         md = dist
         if east:
-            md = max(dist, dfs(x + 2, y, x, y, dist + 1))
+            segs = list(segments)
+            segs.append(curseg + 1)
+            md = max(dist, dfs(x + 2, y, x, y, dist + 1, segs))
         if west:
-            md = max(md, dfs(x - 2, y, x, y, dist + 1))
+            segs = list(segments)
+            segs.append(curseg + 1)
+            md = max(md, dfs(x - 2, y, x, y, dist + 1, segs))
         if north:
-            md = max(md, dist, dfs(x, y - 2, x, y, dist + 1))
+            segs = list(segments)
+            segs.append(curseg + 1)
+            md = max(md, dist, dfs(x, y - 2, x, y, dist + 1, segs))
         if south:
-            md = max(md, dfs(x, y + 2, x, y, dist + 1))
+            segs = list(segments)
+            segs.append(curseg + 1)
+            md = max(md, dfs(x, y + 2, x, y, dist + 1, segs))
+        segments.append(curseg)
         return md
 
 marks = {}
@@ -299,4 +313,4 @@ lees(0, 0, 1, marks)
 maxkey = max(marks, key=lambda x:marks[x])
 print(maxkey, marks[maxkey], grid[maxkey])
 
-print(dfs(0, 0, 0, 0, 0))
+print(dfs(0, 0, 0, 0, 0, []))
