@@ -1,5 +1,6 @@
 import re
 import sys
+from collections import defaultdict
 sys.setrecursionlimit(5000)
 
 # pos=<26276148,18772321,-169986>, r=84817629
@@ -17,35 +18,43 @@ with open('23.txt') as f:
         i += 1
 
 
-min_x, min_y, min_z = 0, 0, 0
+min_x, min_y, min_z = 99999999, 99999999, 99999999
 max_x, max_y, max_z = 0, 0, 0
+avg_x, avg_y, avg_z = 0, 0, 0
 c = 0
 for b in bots:
-    min_x = min(min_x, b[0] - b[4])
-    max_x = max(max_x, b[0] - b[4])
-    min_y = min(min_y, b[0] - b[4])
-    max_y = max(max_y, b[0] - b[4])
-    min_z = min(min_z, b[0] - b[4])
-    max_z = max(max_z, b[0] - b[4])
+    min_x = min(min_x, b[0] - b[3])
+    max_x = max(max_x, b[0] + b[3])
+    min_y = min(min_y, b[1] - b[3])
+    max_y = max(max_y, b[1] + b[3])
+    min_z = min(min_z, b[2] - b[3])
+    max_z = max(max_z, b[2] + b[3])
+    avg_x += b[0]
+    avg_y += b[1]
+    avg_z += b[2]
 
-print('min', min_x, min_y, min_z)
-print('max', max_x, max_y, max_z)
+#print('min', min_x, min_y, min_z)
+#print('max', max_x, max_y, max_z)
+#print('avg', avg_x, avg_y, avg_z)
 
 # min/max
 # -154355239 -154355239 -154355239
 # 228637767 228637767 228637767
 
 
-def manhat_dist(b1, b2):
+def manhat_dist_bs(b1, b2):
     return abs(b1[0] - b2[0]) + abs(b1[1] - b2[1]) + abs(b1[2] - b2[2])
 
-def manhat_dist(b1, x,y,z):
+def manhat_dist_b(b1, x,y,z):
     return abs(b1[0] - x) + abs(b1[1] - y) + abs(b1[2] - z)
+
+def manhat_dist(x1,y1,z1,x2,y2,z2):
+    return abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)
 
 def count_in_range(x,y,z):
     c = 0
     for b in bots:
-        d = manhat_dist(b, x,y,z)
+        d = manhat_dist_b(b, x,y,z)
         if d <= b[3]:
             c += 1
     return c
@@ -57,35 +66,123 @@ def next_coords(lx, ly, lz, rx, ry, rz):
     return nx,ny,nz
 
 # 631  37141264 37141264 37141264
+# print(count_in_range(40241264,40241264,40241264)) # 735
+# 834 [(26587855, 48753774, 52988263)]
+# (24376473, 44307494, 56406868) 878 4 552845 444628 369544
 
-#print(count_in_range(37141264,37141264,37141264)) # 631
-#print(count_in_range(38141264,38141264,38141264)) # 639
-#print(count_in_range(39141264,39141264,39141264)) # 679
-#print(count_in_range(39541264,39541264,39541264)) # 681
-#print(count_in_range(39841264,39841264,39841264)) # 734
+# 24376473, 44307494, 56406868) 878 4 552845 444628 369544
+# 23823628, 44218566, 56748724) 873 550 55284 44462 36954
+# 23768344, 44174104, 56711770) 873 1089 5528 4446 3695
+# 23762816, 44169658, 56708075) 873 1089 552 444 369
+# 23762264, 44169214, 56707706) 873 1320 55 44 36
 
-print(count_in_range(40141264,40141264,40141264)) # 735
-print(count_in_range(40211264,40211264,40211264)) # 735
-print(count_in_range(40241264,40241264,40241264)) # 735
-print(count_in_range(40291264,40291264,40291264)) # 735
-print(count_in_range(40341264,40341264,40341264)) # 735
+# (23788325, 44153794, 56778344) 898
+# (22788320, 43153789, 56778344) 902
+# (22288320, 42653789, 56778344) 910
+# (21788320, 42153789, 56778344) 913
 
-#print(count_in_range(40541264,40541264,40541264)) # 734
-#print(count_in_range(41141264,41141264,41141264)) # 734
-#print(count_in_range(42141264,42141264,42141264)) # 733
+# 2657056 (21131264, 41496733, 56778344) 947
+
+# < 119406341
+
+print(manhat_dist(0, 0, 0, 21131264, 41496733, 56778344))
 exit()
 
-def binary(lx, ly, lz, rx, ry, rz):
-    nx, ny, nz = next_coords(lx, ly, lz, rx, ry, rz)
-    in_range = count_in_range(nx, ny, nz)
-    print('c', in_range, nx,ny,nz)
+#print(count_in_range(23788325, 44153794, 56778344))
+# 1897476 (21890844, 42256313, 56778344)
+n = 1700000
+max = 913
+for n in range(2_600_000, 2_900_000):
+    c = count_in_range(23788320 - n, 44153789 - n, 56778344)
+    if c > max:
+        print(n, (23788320 - n, 44153789 - n, 56778344), c)
+        max = c
+    if c < max:
+        print(n, (23788320 - n, 44153789 - n, 56778344), c)
+        break
+    if n % 10000 == 0:
+        print(n)
+exit()
 
-    nxl, nyl, nzl = next_coords(lx, ly, lz, nz, ny, nz)
-    in_range = count_in_range(nxl, nyl, nzl)
-    print('l', in_range, nxl,nyl,nzl)
+def go(min_x, min_y, min_z, max_x, max_y, max_z):
+    best = defaultdict(list)
+    max_c = 0
+    rx = max(1, abs(max_x - min_x) // 10)
+    ry = max(1, abs(max_y - min_y) // 10)
+    rz = max(1, abs(max_z - min_z) // 10)
+    for x in range(min_x, max_x + 1, rx):
+        for y in range(min_y, max_y + 1, ry):
+            for z in range(min_z, max_z + 1, ry):
+                c = count_in_range(x,y,z)
+                if c >= max_c and c > 0:
+                    max_c = c
+                    best[c].append((x,y,z))
+    return max_c, best
 
-    nxr, nyr, nzr = next_coords(nz, ny, nz, rx, ry, rz)
-    in_range = count_in_range(nxr, nyr, nzr)
-    print('r', in_range, nxr,nyr,nzr)
+#max_c, best = go(min_x, min_y, min_z, max_x, max_y, max_z)
+#print(max_c, best[max_c])
+#
+#rx = max(1, abs(max_x - min_x))
+#ry = max(1, abs(max_y - min_y))
+#rz = max(1, abs(max_z - min_z))
+#
+##for next in best[max_c]:
+#next = best[max_c][0]
+#best_coord = [0, None]
+#while rx > 0 and ry > 0 and rz > 0:
+#    rx = max(1, rx) // 10
+#    ry = max(1, ry) // 10
+#    rz = max(1, rz) // 10
+#    if rx == 0 or ry == 0 or rz == 0:
+#        break
+#    max_c, best = go(next[0] - rx, next[1] - ry, next[2] - rz, next[0] + rx, next[1] + ry, next[2] + rz)
+#    if max_c == -1:
+#        break
+#    print(next, max_c, len(best[max_c]), rx, ry, rz)
+#    next = best[max_c][0]
+#    if max_c > best_coord[0]:
+#        best_coord = (max_c, best[max_c])
+#
+#print(best_coord)
 
-binary(max_x, max_y, max_z, min_x, min_y, min_z)
+# (878, [(23823628, 44218566, 56748724), (23823628, 44307491, 56659799), (23823628, 44396416, 56570874), (23823628, 44485341, 56481949)])
+
+max_c, best = 878, [(23823628, 44218566, 56748724), (23823628, 44307491, 56659799), (23823628, 44396416, 56570874), (23823628, 44485341, 56481949)]
+
+min_x, min_y, min_z = 99999999, 99999999, 99999999
+max_x, max_y, max_z = 0, 0, 0
+c = 0
+for n in best:
+    min_x = min(min_x, n[0])
+    max_x = max(max_x, n[0])
+    min_y = min(min_y, n[1])
+    max_y = max(max_y, n[1])
+    min_z = min(min_z, n[2])
+    max_z = max(max_z, n[2])
+
+rx = max(1, abs(max_x - min_x))
+ry = max(1, abs(max_y - min_y))
+rz = max(1, abs(max_z - min_z))
+
+max_c, best = go(min_x, min_y, min_z, max_x, max_y, max_z)
+
+# (23823462, 44188931, 56778344) 898 13 1 1 1
+
+#for next in best[max_c]:
+next = best[max_c][0]
+best_coord = [0, None]
+while rx > 0 and ry > 0 and rz > 0:
+    rx = max(1, rx // 10)
+    ry = max(1, ry // 10)
+    rz = max(1, rz // 10)
+    if rx == 0 or ry == 0 or rz == 0:
+        break
+    max_c, best = go(next[0] - rx, next[1] - ry, next[2] - rz, next[0] + rx, next[1] + ry, next[2] + rz)
+    if max_c == -1:
+        break
+    print(next, max_c, len(best[max_c]), rx, ry, rz)
+    next = best[max_c][0]
+    if max_c > best_coord[0]:
+        best_coord = (max_c, best[max_c])
+
+print(best_coord)
