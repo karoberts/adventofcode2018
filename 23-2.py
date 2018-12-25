@@ -5,43 +5,6 @@ sys.setrecursionlimit(5000)
 
 # pos=<26276148,18772321,-169986>, r=84817629
 
-pat = re.compile(r'^pos=<([\-\d]+),([\-\d]+),([\-\d]+)>, r=([\d]+)$')
-
-bots = []
-i = 0
-avg = [0, 0, 0]
-with open('23.txt') as f:
-    for line in (l.strip() for l in f):
-        #print(line)
-        m = pat.match(line)
-        bots.append([int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4)), i])
-        i += 1
-
-
-min_x, min_y, min_z = 99999999, 99999999, 99999999
-max_x, max_y, max_z = 0, 0, 0
-avg_x, avg_y, avg_z = 0, 0, 0
-c = 0
-for b in bots:
-    min_x = min(min_x, b[0] - b[3])
-    max_x = max(max_x, b[0] + b[3])
-    min_y = min(min_y, b[1] - b[3])
-    max_y = max(max_y, b[1] + b[3])
-    min_z = min(min_z, b[2] - b[3])
-    max_z = max(max_z, b[2] + b[3])
-    avg_x += b[0]
-    avg_y += b[1]
-    avg_z += b[2]
-
-#print('min', min_x, min_y, min_z)
-#print('max', max_x, max_y, max_z)
-#print('avg', avg_x, avg_y, avg_z)
-
-# min/max
-# -154355239 -154355239 -154355239
-# 228637767 228637767 228637767
-
-
 def manhat_dist_bs(b1, b2):
     return abs(b1[0] - b2[0]) + abs(b1[1] - b2[1]) + abs(b1[2] - b2[2])
 
@@ -58,6 +21,60 @@ def count_in_range(x,y,z):
         if d <= b[3]:
             c += 1
     return c
+
+pat = re.compile(r'^pos=<([\-\d]+),([\-\d]+),([\-\d]+)>, r=([\d]+)$')
+
+bots = []
+i = 0
+avg = [0, 0, 0]
+with open('23.txt') as f:
+    for line in (l.strip() for l in f):
+        #print(line)
+        m = pat.match(line)
+        bots.append([int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4)), i])
+        i += 1
+
+min_x, min_y, min_z = 99999999, 99999999, 99999999
+max_x, max_y, max_z = 0, 0, 0
+c = 0
+for b in bots:
+    min_x = min(min_x, b[0] - b[3])
+    max_x = max(max_x, b[0] + b[3])
+    min_y = min(min_y, b[1] - b[3])
+    max_y = max(max_y, b[1] + b[3])
+    min_z = min(min_z, b[2] - b[3])
+    max_z = max(max_z, b[2] + b[3])
+
+print('min', min_x, min_y, min_z)
+print('max', max_x, max_y, max_z)
+
+# 949  21131263  41496634  56778443
+tgt = (21131263, 41496634, 56778443)
+
+for b in bots:
+    d = manhat_dist_b(b, tgt[0], tgt[1], tgt[2])
+    if d > b[3] and d - b[3] < 1_400_000:
+        print(d - b[3], b)
+
+print(count_in_range(tgt[0], tgt[1], tgt[2]))
+print(manhat_dist(0, 0, 0, tgt[0], tgt[1], tgt[2]))
+
+mx = 0
+for x in range(tgt[0]-1, tgt[0]+ 3):
+    for y in range(tgt[1]-10, tgt[1]+10):
+        #print(x,y)
+        for z in range(tgt[2]-10, tgt[2]+10):
+            c = count_in_range(x, y, z)
+            if c == 949:
+                mx = c
+                print(mx, x,y,z, manhat_dist(0,0,0,x,y,z))
+                break
+                
+exit()
+
+# min/max
+# -154355239 -154355239 -154355239
+# 228637767 228637767 228637767
 
 def next_coords(lx, ly, lz, rx, ry, rz):
     nx = abs(lx - rx) // 2 + rx
