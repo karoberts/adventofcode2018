@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83a136f7-3455-46dd-a652-2155531e450b}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>20.py</StartupFile>
+    <StartupFile>25-1.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -98,6 +98,9 @@
     </Compile>
     <Compile Include="24-2.py" />
     <Compile Include="24-1.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="25-1.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="dllist.py">
