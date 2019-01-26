@@ -53,7 +53,7 @@ tgt = (21131263, 41496634, 56778443)
 
 for b in bots:
     d = manhat_dist_b(b, tgt[0], tgt[1], tgt[2])
-    if d > b[3] and d - b[3] < 1_400_000:
+    if d > b[3] and d - b[3] < 1400000:
         print(d - b[3], b)
 
 print(count_in_range(tgt[0], tgt[1], tgt[2]))
@@ -109,7 +109,7 @@ exit()
 # 1897476 (21890844, 42256313, 56778344)
 n = 1700000
 max = 913
-for n in range(2_600_000, 2_900_000):
+for n in range(2600000, 2900000):
     c = count_in_range(23788320 - n, 44153789 - n, 56778344)
     if c > max:
         print(n, (23788320 - n, 44153789 - n, 56778344), c)

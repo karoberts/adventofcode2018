@@ -19,39 +19,42 @@ with open('19.txt') as f:
 regs = [0, 0, 0, 0, 0, 0]
 
 # part 2
-regs[0] = 1
-# 10551367 = 2801 × 3767
+part2 = True
 
-"""
- 2: r4 = 1                      ip = 2      ip = 3
+if part2:
+    regs[0] = 1
+    # 10551367 = 2801 × 3767
 
- 3: r2 = r1 * r4                ip = 3      ip = 4
- 4: r2 = r2 == r5 ? 1 : 0       ip = 4      ip = 5
- 5: r3 += r2                    ip = 5      ip = 5 + r2 + 1
- 6: r3 += 1                     ip = 6      ip = 7 + 1
+    """
+     2: r4 = 1                      ip = 2      ip = 3
 
- 7: r0 += r1
+     3: r2 = r1 * r4                ip = 3      ip = 4
+     4: r2 = r2 == r5 ? 1 : 0       ip = 4      ip = 5
+     5: r3 += r2                    ip = 5      ip = 5 + r2 + 1
+     6: r3 += 1                     ip = 6      ip = 7 + 1
 
- 8: r4 += 1                     ip = 8      ip = 9
- 9: r2 = r4 > r5 ? 1 : 0        ip = 9      ip = 10
-10: r3 += r2                    ip = 10     ip = 10 + r2 + 1
-11: r3 = 2                      ip = 11     ip = 2 + 1
+     7: r0 += r1
 
-12: r1 += 1                     ip = 12     ip = 13
-13: r2 = r1 > r5 ? 1 : 0        ip = 13     ip = 14
-14: r3 += r2                    ip = 14     ip = 14 + r2 + 1
-15: r3 = 1                      ip = 14     ip = 1 + 1
+     8: r4 += 1                     ip = 8      ip = 9
+     9: r2 = r4 > r5 ? 1 : 0        ip = 9      ip = 10
+    10: r3 += r2                    ip = 10     ip = 10 + r2 + 1
+    11: r3 = 2                      ip = 11     ip = 2 + 1
 
-16: r3 *= r3                    ip = 16     ip = r3^2 + 1
-"""
+    12: r1 += 1                     ip = 12     ip = 13
+    13: r2 = r1 > r5 ? 1 : 0        ip = 13     ip = 14
+    14: r3 += r2                    ip = 14     ip = 14 + r2 + 1
+    15: r3 = 1                      ip = 14     ip = 1 + 1
+
+    16: r3 *= r3                    ip = 16     ip = r3^2 + 1
+    """
 
 # ip=9 [0, 1, 0, 9, 1831, 10551367] gtrr 4 5 2[0, 1, 0, 9, 1831, 10551367]
-regs = [0, 1, 0, 9, 10551366, 10551367]
-regs = [1, 2, 0, 9, 10551366, 10551367]
-regs = [1, 2800, 0, 9, 10551366, 10551367]
-regs = [1, 2801, 0, 9, 3766, 10551367]
-regs = [6569, 10551367, 0, 9, 1, 10551367]
-regs = [10557936, 10551367, 0, 9, 10551366, 10551367]
+    regs = [0, 1, 0, 9, 10551366, 10551367]
+    regs = [1, 2, 0, 9, 10551366, 10551367]
+    regs = [1, 2800, 0, 9, 10551366, 10551367]
+    regs = [1, 2801, 0, 9, 3766, 10551367]
+    regs = [6569, 10551367, 0, 9, 1, 10551367]
+    regs = [10557936, 10551367, 0, 9, 10551366, 10551367]
 
 # part 2 = r0 = 1 + 2801 + 3767 + 10551367
 # every time r1*r4 == 10551367, r1 gets added to r0.  So every factor (1,2801,3767)
@@ -71,7 +74,7 @@ while True:
     #print('ip', ip)
     #if ip == 7 or stmts % 100000 == 0:
      #   print(regs[4])
-    print('ip={} {} {}'.format(regs[ipreg], regs, pline['l']), end='')
+    #print('ip={} {} {}'.format(regs[ipreg], regs, pline['l']), end='')
     op = pline['op']
     a = pline['args'][0]
     b = pline['args'][1]
@@ -110,7 +113,7 @@ while True:
     elif op == 'eqrr':
         regs[c] = 1 if regs[a] == regs[b] else 0
 
-    print(regs)
+    #print(regs)
 
 #   if regs[ipreg] == 2 and regs == [0, 1, 0, 2, 1000, 10551367]:
 #       print('found1', stmts)

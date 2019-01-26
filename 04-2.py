@@ -15,7 +15,7 @@ def get_times(e1, e2):
     return [m for m in range(e1['m'], e2['m'])]
 
 entries = None
-with open('04-1.txt') as f:
+with open('04.txt') as f:
     entries = sorted([parse(line.strip()) for line in f], key=lambda x:x['sk'])
 
 curday = None

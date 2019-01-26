@@ -33,7 +33,7 @@ def react(p):
     return p
 
 p = None
-with open('05-1.txt') as f:
+with open('05.txt') as f:
     p = f.readline().strip()
 
 #p = 'dabAcCaCBAcCcaDA'

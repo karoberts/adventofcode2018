@@ -1,4 +1,5 @@
 import re
+import sys
 
 serial = 7857
 
@@ -31,6 +32,8 @@ for s in range(14, 300):
         maxkey = max(powgrid, key=lambda i:powgrid[i])
         print(s, powgrid[maxkey])
         print(s, maxkey)
+        sys.stdout.flush()
+        exit()
     for x in range(1, 300 - s + 1):
         #print('x', x)
         for y in range(1, 300 - s + 1):

@@ -1,8 +1,5 @@
 import re
 
-def key(x,y):
-    return str(x) + ',' + str(y)
-
 def addcart(x,y,k,dir):
     cart = {'id': len(carts), 'dir': dir, 'x': x, 'y': y, 'tc': 1}
     carts.append(cart)
@@ -18,7 +15,7 @@ with open('13.txt') as f:
     for line in (l.strip('\n') for l in f):
         x = 0
         for c in line:
-            k = key(x,y)
+            k = (x,y)
             if c == '-':
                 grid[k] = 'hz'
             elif c == '|':
@@ -78,7 +75,7 @@ def turncart(cart):
 def movecart(x,y,k):
     cart = cartpos[k]
     if cart['dir'] == 'U':
-        next = key(x, y-1)
+        next = (x, y-1)
         track = grid[next]
         if track == 'br_tl':
             cart['dir'] = 'R'
@@ -89,7 +86,7 @@ def movecart(x,y,k):
         cart_moves.append((cart, next, k))
         pass
     elif cart['dir'] == 'D':
-        next = key(x, y+1)
+        next = (x, y+1)
         track = grid[next]
         if track == 'br_tl':
             cart['dir'] = 'L'
@@ -99,7 +96,7 @@ def movecart(x,y,k):
             turncart(cart)
         cart_moves.append((cart, next, k))
     elif cart['dir'] == 'R':
-        next = key(x+1, y)
+        next = (x+1, y)
         track = grid[next]
         if track == 'br_tl':
             cart['dir'] = 'U'
@@ -109,7 +106,7 @@ def movecart(x,y,k):
             turncart(cart)
         cart_moves.append((cart, next, k))
     elif cart['dir'] == 'L':
-        next = key(x-1, y)
+        next = (x-1, y)
         track = grid[next]
         if track == 'br_tl':
             cart['dir'] = 'D'
@@ -123,13 +120,13 @@ part = 2
  
 tick = 0
 while True:
-    if tick % 100 == 0:
-        print(tick, len(cartpos))
+    #if tick % 100 == 0:
+    #    print(tick, len(cartpos))
     cart_moves = []
     carts_removed = set()
     for y in range(0, 150):
         for x in range(0, 150):
-            k = key(x,y)
+            k = (x,y)
             if k in cartpos:
                 movecart(x,y,k)
 

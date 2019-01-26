@@ -1,6 +1,6 @@
 
 cur = 0
-with open('01-1.txt') as f:
+with open('01.txt') as f:
     for line in f:
         positive = 1 if line[0] == '+' else -1
         num = int(line[1:])

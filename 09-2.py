@@ -1,10 +1,7 @@
-
 import json
 import re
 import operator
 from collections import Counter
-from sortedcontainers import SortedDict
-from sortedcontainers import SortedSet
 
 from dllist import dllist
 
@@ -85,7 +82,7 @@ for marble in range(3, last_marble + 1):
         cur_p = 1
 
 #print(cur_p, marble, cur_m, circle)
-print(p_scores)
+#print(p_scores)
 winner = max(p_scores, key=lambda x:p_scores[x])
 print(p_scores[winner])
 

@@ -7,7 +7,7 @@ def parse(l):
     return {'id': int(m.group(1)), 'l':int(m.group(2)), 't': int(m.group(3)), 'w':int(m.group(4)), 'h':int(m.group(5))}
 
 lines = None
-with open('03-1.txt') as f:
+with open('03.txt') as f:
     lines = [line.strip() for line in f]
 
 used = {}

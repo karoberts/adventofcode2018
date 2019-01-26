@@ -2,8 +2,6 @@ import json
 import re
 import operator
 from collections import Counter
-from sortedcontainers import SortedDict
-from sortedcontainers import SortedSet
 
 pat = re.compile(r'^$')
 
@@ -18,7 +16,7 @@ def readit(pos):
     
     return amt
 
-with open('08-1.txt') as f:
+with open('08.txt') as f:
     for line in f:
         es = [int(x) for x in line.strip().split(' ')]
 

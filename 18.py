@@ -97,4 +97,4 @@ for i in range(896, 1000000001, 28):
     pass
 print(i)
 
-print(pats[1_000_000_000 - i])
+print(pats[1000000000 - i])
