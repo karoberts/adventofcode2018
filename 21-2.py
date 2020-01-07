@@ -195,8 +195,8 @@ while True:
             print(regs[4], last)
             exit()
         items.add(regs[4])
-        printregs()
-        print(len(items) / 0xffffff * 100.0)
+        #printregs()
+        #print(len(items) / 0xffffff * 100.0)
         last = regs[4]
     #printregs()
 

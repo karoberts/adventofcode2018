@@ -48,7 +48,7 @@ def has_msg():
     #return False
 
 def print_it(s):
-    with open('csv10/' + str(s) + '.csv', 'w') as o:
+    with open('csv10-' + str(s) + '.csv', 'w') as o:
         for p in points:
             o.write(str(p['x']) + ',' + str(p['y']) + "\n")
 
@@ -80,8 +80,8 @@ for sec in range(1, 15000):
         #if (ox < 0 and p['x'] > 0) or (ox > 0 and p['x'] < 0) or (oy < 0 and p['y'] > 0) or (oy > 0 and p['y'] < 0):
             #print(sec, 'point', p, 'switched')
 
-    if sec % 100 == 0:
-        print(sec)
+    #if sec % 100 == 0:
+        #print(sec)
 
     #if sec % 1000 == 0:
         #print_it(sec)

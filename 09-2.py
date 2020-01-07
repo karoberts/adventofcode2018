@@ -34,8 +34,10 @@ p_scores = {n:0 for n in range(1,nplayers+1)}
 
 for marble in range(3, last_marble + 1):
 
+    """
     if marble % 10000 == 0:
         print('m', marble, marble / last_marble * 100.0)
+    """
 
     if marble % 23 == 0:
         p_scores[cur_p] += marble

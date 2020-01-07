@@ -272,11 +272,11 @@ prev = {}
 dist = defaultdict(lambda :999999999)
 
 x = dijkstra()
-print(x)
+#print(x)
 
 cost = print_path(key(target_x, target_y))
-print(dist[key(target_x, target_y) + ',t'])
-print(cost)
+#print(dist[key(target_x, target_y) + ',t'])
+print('part2',cost)
 
 #cost = print_path(key(4,4))
 #print(cost)

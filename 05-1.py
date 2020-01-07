@@ -35,5 +35,5 @@ while True:
     p = p[0:remove] + p[remove+2:]
     #print('after', p)
 
-print(p)
+#print(p)
 print(len(p))

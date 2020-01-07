@@ -129,7 +129,7 @@ while True:
     groups = ngs
     if inf_sum == 0 or imm_sum == 0:
         print('imms', imm_sum, 'infs', inf_sum)
-        print(json.dumps(ngs, indent=2, cls=SetEncoder))
+        #print(json.dumps(ngs, indent=2, cls=SetEncoder))
         break
 
     print()

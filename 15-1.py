@@ -1,3 +1,5 @@
+import os
+
 def key(x,y):
     return str(x) + ',' + str(y)
 
@@ -297,6 +299,7 @@ printit()
 
 next = True
 for rn in range(1, 100):
+    os.system("clear")
     print('Round', rn)
     next = round(rn)
 

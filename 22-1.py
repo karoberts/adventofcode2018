@@ -6,9 +6,9 @@ target_y = 709
 
 p = False
 
-depth = 510
-target_x = 10
-target_y = 10
+#depth = 510
+#target_x = 10
+#target_y = 10
 
 grid = {}
 ero_table = {}
