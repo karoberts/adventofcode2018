@@ -1,5 +1,31 @@
 import re
 
+# from reddit, mine worked originally and I somehow got the answer, but it doesn't seem runnable anymore
+seen = set()
+CS = set()
+final = None
+
+C = 10283511
+D = 65536
+while True:
+    E = D % 256
+    C += E
+    C = (C%(2**24) * 65899) % (2**24)
+    if D < 256:
+        if C not in CS:
+            final = C
+        CS.add(C)
+        D = C | (2**16)
+        if D in seen:
+            print(final)
+            break
+        seen.add(D)
+        C = 10283511
+        continue
+
+    D = D//256
+exit()
+
 def printcodeline(ip, pline):
     def print_r_op(a,b,c,op):
         if c == 2:
